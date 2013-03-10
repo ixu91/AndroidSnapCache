@@ -1,58 +1,75 @@
 package com.example.snapcache;
 
+import io.filepicker.FPService;
+import io.filepicker.FilePicker;
+import io.filepicker.FilePickerAPI;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONStringer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
 public class PostActivity extends Activity {
 
+	String type = "";
+	private static final String MY_API_KEY = "Alz5CvlnsTliNCseaYWgwz";
+	String latitude = "";
+	String longitude = "";
+	String name = "";
+	String fb_id = "";
+	String uid = "";
+	String url = "";
+	String ftype = "";
+	String privacy = "";
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
 		Bundle b = getIntent().getExtras();
-		String type = b.getString("type");
-		String name = b.getString("name");
-		String fb_id = b.getString("fb_id");
+
+		latitude = b.getString("latitude");
+		longitude = b.getString("longitude");
+		type = b.getString("type");
+		name = b.getString("name");
+		fb_id = b.getString("fb_id");
+
+		uid = b.getString("uid");
+		url = b.getString("url");
+		ftype = b.getString("file_type");
+		privacy = b.getString("privacy");
 
 		Log.i("POST", "we are in the post activity");
 
 		if (type.equals("artifact")) {
+			Log.i("TYPE", "we are posting a new artifact");
+
 			HashMap<String, String> data = new HashMap<String, String>();
-			// data.put("data_type", "picture");
+			data.put("data_type", "image");
 			data.put("file_url",
 					"https://www.filepicker.io/api/file/heHHkRRAaYp0e6qmruQm");
-			// data.put("latitude", "43.21");
-			// data.put("longitude", "203.32");
+			data.put("latitude", "43.221");
+			data.put("longitude", "23.3332");
 			data.put("name", "testmine");
-			// data.put("privacy", "public");
+			data.put("privacy", "public");
 			data.put("user_id", "102");
+			// data.put("radius", "100.0");
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
 					.execute("http://sheltered-falls-8280.herokuapp.com/artifacts.json");
@@ -88,30 +105,76 @@ public class PostActivity extends Activity {
 			HttpPost post = new HttpPost(params[0]);// in this case, params[0]
 													// is URL
 			try {
-				// set up post data
-				ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-				Iterator<String> it = mData.keySet().iterator();
-				while (it.hasNext()) {
-					String key = it.next();
-					Log.i("KEY", key);
-					Log.i("WORD", mData.get(key));
-					nameValuePair.add(new BasicNameValuePair(key, mData
-							.get(key)));
+				int resCode;
+				String res_string = "";
+
+				// POST request to <service>/SaveVehicle
+				HttpPost http_request = new HttpPost();
+				if (type.equals("user")) {
+					http_request = new HttpPost(
+							"http://sheltered-falls-8280.herokuapp.com/users.json");
+				} else if (type.equals("artifact")) {
+					http_request = new HttpPost(
+							"http://sheltered-falls-8280.herokuapp.com/artifacts.json");
 				}
 
-				post.setEntity(new UrlEncodedFormEntity(nameValuePair, "UTF-8"));
-				HttpResponse response = client.execute(post);
-				Log.i("POST", post.getRequestLine().toString());
+				http_request.setHeader("Content-type", "application/json");
+				http_request.setHeader("user-agent", "Yoda");
 
-				StatusLine statusLine = response.getStatusLine();
-				Log.i("RES", Integer.toString(statusLine.getStatusCode()));
+				// Build JSON string
+				JSONStringer vehicle = new JSONStringer();
 
-				if (statusLine.getStatusCode() == HttpURLConnection.HTTP_OK) {
-					result = EntityUtils.toByteArray(response.getEntity());
-					str = new String(result, "UTF-8");
+				try {
+					if (type.equals("user")) {
+						vehicle = new JSONStringer().object()
+								.key("facebook_id")
+								.value(mData.get("facebook_id")).key("name")
+								.value(mData.get("name")).endObject();
+
+					} else if (type.equals("artifact")) {
+						vehicle = new JSONStringer().object().key("data_type")
+								.value(type).key("file_url")
+								.value(mData.get("file_url")).key("latitude")
+								.value(mData.get("latitude")).key("longitude")
+								.value(mData.get("longitude")).key("name")
+								.value(mData.get("name")).key("privacy")
+								.value(mData.get("privacy")).key("user_id")
+								.value(mData.get("user_id")).endObject();
+					}
+					StringEntity entity;
+					try {
+						entity = new StringEntity(vehicle.toString());
+						res_string = entity.toString();
+						Log.i("POST", res_string);
+						http_request.setEntity(entity);
+
+						// Send request to WCF service
+						DefaultHttpClient httpClient = new DefaultHttpClient();
+						HttpResponse response;
+						try {
+							response = httpClient.execute(http_request);
+							resCode = response.getStatusLine().getStatusCode();
+							res_string = response.toString();
+							Log.i("TEST",
+									"HTTP CODE: " + Integer.toString(resCode));
+
+						} catch (ClientProtocolException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
 			}
 			return str;
@@ -124,12 +187,12 @@ public class PostActivity extends Activity {
 		protected void onPostExecute(String result) {
 			// something...
 			// get the user_id and return back to MainActivity
-			
+
 			Intent i = getIntent();
-//			i.putExtra("user_id", uid);
+			// i.putExtra("user_id", uid);
 			setResult(Activity.RESULT_OK, i);
 			finish();
-			
+
 		}
 	}
 }

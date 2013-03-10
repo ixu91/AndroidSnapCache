@@ -38,7 +38,6 @@ import com.facebook.model.GraphUser;
 
 public class MainActivity extends Activity {
 
-	private static final String MY_API_KEY = "Alz5CvlnsTliNCseaYWgwz";
 	String name = "";
 	String fb_id = "";
 	String uid = "";
@@ -48,13 +47,22 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		Session.getActiveSession().onActivityResult(this, requestCode,
 				resultCode, data);
-		
+
 		// get the new user id after a post
 		if (data.getExtras().containsKey("user_id")) {
 			uid = data.getStringExtra("user_id");
 		}
 
 		Log.i("LOG", "getting active session");
+
+		// sometimes its just jumps to hear, so alway get to the Profile page
+		if (Session.getActiveSession().isOpened()) {
+			Intent i = new Intent(getApplicationContext(),
+					ProfileActivity.class);
+			Bundle b = new Bundle();
+			b.putString("uid", uid);
+			startActivity(i);
+		}
 
 	}
 
@@ -94,7 +102,7 @@ public class MainActivity extends Activity {
 										new RequestTask()
 												.execute("http://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
 														+ fb_id);
-//														+ "TestFacebook1");
+										// + "TestFacebook1");
 
 										Intent i = new Intent(
 												getApplicationContext(),
@@ -128,24 +136,6 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
-	}
-
-
-	public void startUpload(View view) {
-		FilePickerAPI.setKey(MY_API_KEY);
-		Uri uri = Uri.fromFile(new File("mnt/sdcard/Movies/test")); // a uri to
-																	// the
-																	// content
-																	// to save
-		Intent intent = new Intent(FilePicker.SAVE_CONTENT, uri, this,
-				FilePicker.class);
-		intent.putExtra("services", new String[] { FPService.DROPBOX,
-				FPService.GALLERY, FPService.CAMERA, FPService.BOX,
-				FPService.FLICKR, FPService.GDRIVE, FPService.GITHUB,
-				FPService.GMAIL, FPService.INSTAGRAM, FPService.FACEBOOK });
-		startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_SAVEFILE);
-		// fileUrl = intent.getExtras().getString("fpurl");
-		// Log.i("file", fileUrl);
 	}
 
 	class RequestTask extends AsyncTask<String, String, String> {
@@ -184,11 +174,11 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			if (result != null) {
-//				Log.i("USER", result);
+				// Log.i("USER", result);
 				String[] result_ar = result.split(",");
-//				for (String str : result_ar) {
-//					Log.i("RESULT", str);
-//				}
+				// for (String str : result_ar) {
+				// Log.i("RESULT", str);
+				// }
 				Log.i("RES", result_ar[2].substring(5));
 				uid = result_ar[2].substring(5);
 			} else {
