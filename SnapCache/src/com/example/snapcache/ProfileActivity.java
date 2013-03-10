@@ -33,6 +33,8 @@ public class ProfileActivity extends Activity {
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Bundle b = getIntent().getExtras();
+		Log.i("PROFILE", "here");
+		uid = b.getString("uid");
 		
 //		Intent intent = new Intent(this, ProxAlertService.class);
 //		startService(intent);
@@ -70,6 +72,9 @@ public class ProfileActivity extends Activity {
 		Log.i("LOG", "Does the code get here?");
 		Log.i("LOG", "this one?");
 		Uri uri = data.getData();
+		Log.i("FP", "this is the one");
+		String url = data.getExtras().getString("fpurl");
+		Log.i("FP", url);
 
 		Criteria criteria = new Criteria();
 		String provider = locationManager.getBestProvider(criteria, false);
@@ -82,14 +87,14 @@ public class ProfileActivity extends Activity {
 		Bundle b = new Bundle();
 		b.putString("latitude", latitude);
 		b.putString("longitude", longitude);
-		String name = "newtest";
-		b.putString("name", name);
+		b.putString("name", "android_file");
 		b.putString("uid", uid);
-		String url = "http://www.google.com";
+		Log.i("data",uid);
+
 		b.putString("url", url);
-		String type = "artifact";
-		b.putString("type", type);
+		b.putString("type", "artifact");
 		b.putString("file_type", "need file_type");
+		//TODO: allow users to choose privacy setting
 		String privacy = "public";
 		b.putString("privacy", privacy);
 		intent.putExtras(b);

@@ -102,14 +102,13 @@ public class MainActivity extends Activity {
 										new RequestTask()
 												.execute("http://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
 														+ fb_id);
-										// + "TestFacebook1");
 
-										Intent i = new Intent(
-												getApplicationContext(),
-												ProfileActivity.class);
-										Bundle b = new Bundle();
-										b.putString("uid", uid);
-										startActivity(i);
+//										Intent i = new Intent(
+//												getApplicationContext(),
+//												ProfileActivity.class);
+//										Bundle b = new Bundle();
+//										b.putString("uid", uid);
+//										startActivity(i);
 									}
 								}
 							});
@@ -156,22 +155,28 @@ public class MainActivity extends Activity {
 					response.getEntity().writeTo(out);
 					out.close();
 					responseString = out.toString();
+					Log.i("HTTP", "theres no error");
+
 				} else {
 					// Closes the connection.
 					response.getEntity().getContent().close();
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
+				Log.i("HTTP", "theres an error");
+
 				// TODO Handle problems..
 			} catch (IOException e) {
+				Log.i("HTTP", "theres an error");
+
 				// TODO Handle problems..
 			}
 			return responseString;
 		}
 
-		// after checking to see if facebook id exists already
 		@Override
 		protected void onPostExecute(String result) {
+			Log.i("RES", "onPostExecute");
 			super.onPostExecute(result);
 			if (result != null) {
 				// Log.i("USER", result);
@@ -181,8 +186,19 @@ public class MainActivity extends Activity {
 				// }
 				Log.i("RES", result_ar[2].substring(5));
 				uid = result_ar[2].substring(5);
+				
+				Intent i = new Intent(
+						getApplicationContext(),
+						ProfileActivity.class);
+				Bundle b = new Bundle();
+				i.putExtra("uid", uid);
+				b.putString("uid", uid);
+				Log.i("UID", uid);
+				startActivity(i);
+
 			} else {
 				// does not exist, so must post new user
+				Log.i("RES", "new user");
 				Intent intent = new Intent(MainActivity.this,
 						PostActivity.class);
 				Bundle b = new Bundle();

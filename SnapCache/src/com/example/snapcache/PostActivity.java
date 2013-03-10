@@ -61,14 +61,16 @@ public class PostActivity extends Activity {
 			Log.i("TYPE", "we are posting a new artifact");
 
 			HashMap<String, String> data = new HashMap<String, String>();
-			data.put("data_type", "image");
+			data.put("data_type", ftype);
 			data.put("file_url",
-					"https://www.filepicker.io/api/file/heHHkRRAaYp0e6qmruQm");
-			data.put("latitude", "43.221");
-			data.put("longitude", "23.3332");
-			data.put("name", "testmine");
-			data.put("privacy", "public");
-			data.put("user_id", "102");
+					url);
+			data.put("latitude", latitude);
+			data.put("longitude", longitude);
+			data.put("name", "android_file");
+			data.put("privacy", privacy);
+			data.put("user_id", uid);
+			Log.i("data",uid.toString());
+
 			// data.put("radius", "100.0");
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
