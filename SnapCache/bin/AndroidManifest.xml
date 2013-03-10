@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +46,9 @@
         </activity>
         <activity android:name="PostActivity" >
         </activity>
+        <activity android:name="ProxAlertActivity" >
+        </activity>
+        <service android:name="ProxAlertService"></service>
     </application>
 
 </manifest>

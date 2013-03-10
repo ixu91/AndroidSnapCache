@@ -90,9 +90,10 @@ int drawable ic_launcher 0x7f02002d
 int drawable instagram 0x7f02002e
 int drawable select 0x7f02002f
 int drawable spinner 0x7f020030
+int id RelativeLayout1 0x7f080021
 int id authButton 0x7f08000b
 int id button1 0x7f08000a
-int id button2 0x7f080021
+int id button2 0x7f080022
 int id com_facebook_login_activity_progress_bar 0x7f08000e
 int id com_facebook_picker_activity_circle 0x7f08000d
 int id com_facebook_picker_checkbox 0x7f080010
@@ -117,7 +118,7 @@ int id gridView1 0x7f080004
 int id large 0x7f080002
 int id linearLayout1 0x7f080007
 int id listView1 0x7f080003
-int id menu_settings 0x7f080022
+int id menu_settings 0x7f080023
 int id normal 0x7f080001
 int id picker_subtitle 0x7f08001d
 int id progressBar1 0x7f080005

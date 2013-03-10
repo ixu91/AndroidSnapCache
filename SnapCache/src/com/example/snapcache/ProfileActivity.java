@@ -33,6 +33,12 @@ public class ProfileActivity extends Activity {
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Bundle b = getIntent().getExtras();
+		
+//		Intent intent = new Intent(this, ProxAlertService.class);
+//		startService(intent);
+		
+//		Intent intent = new Intent(this, ProxAlertActivity.class);
+//		startActivity(intent);
 		// uid = b.getString("uid");
 
 		// TODO Auto-generated method stub
