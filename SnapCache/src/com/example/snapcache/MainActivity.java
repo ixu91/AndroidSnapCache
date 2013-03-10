@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
 	String name = "";
 	String fb_id = "";
 	String uid = "";
+	String fb_token = "";
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -72,13 +73,12 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Log.i("LOG", "app started");
-
 		Session.openActiveSession(this, true, new Session.StatusCallback() {
 
 			// callback when session changes state
 
 			@Override
-			public void call(Session session, SessionState state,
+			public void call(final Session session, SessionState state,
 					Exception exception) {
 				Log.i("LOG", "try to find session");
 
@@ -97,12 +97,13 @@ public class MainActivity extends Activity {
 									Log.i("LOG", "onCompleted");
 
 									if (user != null) {
+										fb_token = session.getAccessToken();
 										Log.i("FB", user.getId());
 										fb_id = user.getId();
 										name = user.getName();
 										new RequestTask()
 												.execute("http://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
-														+ fb_id);
+														+ fb_id + "&fb_token=" + fb_token);
 
 //										Intent i = new Intent(
 //												getApplicationContext(),
@@ -187,9 +188,8 @@ public class MainActivity extends Activity {
 				// }
 				Log.i("RES", result_ar[2].substring(5));
 				uid = result_ar[2].substring(5);
-				
-				Intent i = new Intent(
-						getApplicationContext(),
+
+				Intent i = new Intent(getApplicationContext(),
 						ProfileActivity.class);
 				Bundle b = new Bundle();
 				i.putExtra("uid", uid);

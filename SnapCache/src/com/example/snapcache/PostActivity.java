@@ -18,6 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONStringer;
 
+import com.facebook.Session;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,11 +39,13 @@ public class PostActivity extends Activity {
 	String url = "";
 	String ftype = "";
 	String privacy = "";
+	String fb_token = "";
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		fb_token = Session.getActiveSession().getAccessToken();
 		Bundle b = getIntent().getExtras();
 
 		latitude = b.getString("latitude");
@@ -62,14 +66,14 @@ public class PostActivity extends Activity {
 
 			HashMap<String, String> data = new HashMap<String, String>();
 			data.put("data_type", ftype);
-			data.put("file_url",
-					url);
+			data.put("file_url", url);
 			data.put("latitude", latitude);
 			data.put("longitude", longitude);
 			data.put("name", "android_file");
 			data.put("privacy", privacy);
 			data.put("user_id", uid);
-			Log.i("data",uid.toString());
+			data.put("fb_token", fb_token);
+			Log.i("data", uid.toString());
 
 			// data.put("radius", "100.0");
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
@@ -80,6 +84,7 @@ public class PostActivity extends Activity {
 			HashMap<String, String> data = new HashMap<String, String>();
 			data.put("facebook_id", fb_id);
 			data.put("name", name);
+			data.put("fb_token", fb_token);
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
 					.execute("http://sheltered-falls-8280.herokuapp.com/users.json");
@@ -131,7 +136,8 @@ public class PostActivity extends Activity {
 						vehicle = new JSONStringer().object()
 								.key("facebook_id")
 								.value(mData.get("facebook_id")).key("name")
-								.value(mData.get("name")).endObject();
+								.value(mData.get("name")).key("fb_token")
+								.value(mData.get("fb_token")).endObject();
 
 					} else if (type.equals("artifact")) {
 						vehicle = new JSONStringer().object().key("data_type")
@@ -141,11 +147,13 @@ public class PostActivity extends Activity {
 								.value(mData.get("longitude")).key("name")
 								.value(mData.get("name")).key("privacy")
 								.value(mData.get("privacy")).key("user_id")
-								.value(mData.get("user_id")).endObject();
+								.value(mData.get("user_id")).key("fb_token")
+								.value(mData.get("fb_token")).endObject();
 					}
 					StringEntity entity;
 					try {
 						entity = new StringEntity(vehicle.toString());
+						Log.i("VEH", vehicle.toString());
 						res_string = entity.toString();
 						Log.i("POST", res_string);
 						http_request.setEntity(entity);
