@@ -4,8 +4,17 @@ import io.filepicker.FPService;
 import io.filepicker.FilePicker;
 import io.filepicker.FilePickerAPI;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,9 +23,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class ProfileActivity extends Activity {
 
@@ -109,6 +120,92 @@ public class ProfileActivity extends Activity {
 			Log.i("file", "FPUrl: " + data.getExtras().getString("fpurl"));
 			return;
 		}
+	}
+
+	@Override
+	protected void onStart(){
+		super.onStart();
+		  Criteria criteria = new Criteria();
+				String provider = locationManager.getBestProvider(criteria, false);
+				Location location = locationManager.getLastKnownLocation(provider);
+				String latitude = Double.toString(location.getLatitude());
+				String longitude = Double.toString(location.getLongitude());
+				try {
+					getJSON(latitude, longitude);
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			  
+				//list stuff
+				
+		
+	}
+
+	@Override
+	protected void onPause(){
+		super.onPause();
+		
+	}
+
+	private String getJSON(String latitude, String longitude) throws ClientProtocolException, IOException{
+		Log.i("Test","In getJSon");
+		int resCode;
+		String res_string = "";
+		String url = "http://sheltered-falls-8280.herokuapp.com/artifacts/show_all_nearby.json?";
+		StringBuilder sb = new StringBuilder();
+		sb.append(url);
+		
+		sb.append("latitude=");
+		sb.append("37.785834");
+		sb.append("&longitude=");
+		sb.append("-122.40641");
+		String finalUrl = sb.toString();
+		new RequestTask().execute(finalUrl);
+		return "";
+	}
+	
+	class RequestTask extends AsyncTask<String, String, String>{
+
+	    @Override
+	    protected String doInBackground(String... uri) {
+	        HttpClient httpclient = new DefaultHttpClient();
+	        HttpResponse response;
+	        String responseString = null;
+	        try {
+	            response = httpclient.execute(new HttpGet(uri[0]));
+	            StatusLine statusLine = response.getStatusLine();
+	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+	                ByteArrayOutputStream out = new ByteArrayOutputStream();
+	                response.getEntity().writeTo(out);
+	                out.close();
+	                responseString = out.toString();
+	            } else{
+	                //Closes the connection.
+	                response.getEntity().getContent().close();
+	                throw new IOException(statusLine.getReasonPhrase());
+	            }
+	        } catch (ClientProtocolException e) {
+	            //TODO Handle problems..
+	        } catch (IOException e) {
+	            //TODO Handle problems..
+	        }
+	        return responseString;
+	    }
+
+	    @Override
+	    protected void onPostExecute(String result) {
+	        super.onPostExecute(result);
+	        Log.i("S", result);
+	        String [] tokens = result.split(",");
+	        String url = (tokens[2].split(":\""))[1].split("\"")[0]; 
+	        Log.i("S", url);
+	        Toast toast = Toast.makeText(getApplicationContext(), "hi" + result, 50);
+	        toast.show();
+	    }
 	}
 
 }

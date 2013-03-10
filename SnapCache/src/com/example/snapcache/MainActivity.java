@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
 					ProfileActivity.class);
 			Bundle b = new Bundle();
 			b.putString("uid", uid);
+			i.putExtra("uid", uid);
 			startActivity(i);
 		}
 
