@@ -53,7 +53,7 @@ public class ProfileActivity extends Activity {
 	private LocationManager locationManager;
 	
 	//private HashMap<String, String> files;
-	private List<Map<String,String>> files = new ArrayList<Map<String,String>>();
+	
 	private HashMap<String, String> urlToName;
 	String uid = "";
 	String fb_token = "";
@@ -69,14 +69,9 @@ public class ProfileActivity extends Activity {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Bundle b = getIntent().getExtras();
 		urlToName = new HashMap<String, String>();
-		//files = new HashMap<String,String>();
 		Log.i("PROFILE", "here");
 		uid = b.getString("uid");
-		Log.i("LIST", "listview before");
-		lv = (ListView) findViewById(R.id.listView);
-
-		Log.i("LIST2", "listview after");
-		
+		lv = (ListView) findViewById(R.id.listView);		
 
 		//		Intent intent = new Intent(this, ProxAlertService.class);
 		//		startService(intent);
@@ -91,12 +86,7 @@ public class ProfileActivity extends Activity {
 	public void startPost(View view) {
 
 		FilePickerAPI.setKey(MY_API_KEY);
-		Uri uri = Uri.fromFile(new File("/tmp/android.txt")); // a uri
-		// to
-		// the
-		// content
-		// to
-		// save
+		Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp")); 
 		Intent fpintent = new Intent(FilePicker.SAVE_CONTENT, uri, this,
 				FilePicker.class);
 		fpintent.putExtra("services", new String[] { FPService.DROPBOX,
@@ -111,10 +101,8 @@ public class ProfileActivity extends Activity {
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.i("LOG", "Does the code get here?");
-		Log.i("LOG", "this one?");
+		
 		Uri uri = data.getData();
-		Log.i("FP", "this is the one");
 		String url = data.getExtras().getString("fpurl");
 		Log.i("FP", url);
 
@@ -200,7 +188,7 @@ public class ProfileActivity extends Activity {
 		String finalUrl = sb.toString();
 		Log.i("Test","get gets called");
 		new RequestTask().execute(finalUrl);
-		return "";
+		return finalUrl;
 	}
 
 	class RequestTask extends AsyncTask<String, String, String>{
@@ -233,6 +221,7 @@ public class ProfileActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
+			List<Map<String,String>> files = new ArrayList<Map<String,String>>();
 			super.onPostExecute(result);
 			Log.i("S", result);
 			String [] entries = result.split("\\},");

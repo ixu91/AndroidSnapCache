@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 										fb_id = user.getId();
 										name = user.getName();
 										new RequestTask()
-												.execute("http://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
+												.execute("https://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
 														+ fb_id + "&fb_token=" + fb_token);
 
 //										Intent i = new Intent(

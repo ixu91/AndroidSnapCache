@@ -29,17 +29,17 @@ import android.util.Log;
 
 public class PostActivity extends Activity {
 
-	String type = "";
+	private String type = "";
 	private static final String MY_API_KEY = "Alz5CvlnsTliNCseaYWgwz";
-	String latitude = "";
-	String longitude = "";
-	String name = "";
-	String fb_id = "";
-	String uid = "";
-	String url = "";
-	String ftype = "";
-	String privacy = "";
-	String fb_token = "";
+	private String latitude = "";
+	private String longitude = "";
+	private String name = "";
+	private String fb_id = "";
+	private String uid = "";
+	private String url = "";
+	private String ftype = "";
+	private String privacy = "";
+	private String fb_token = "";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -78,7 +78,7 @@ public class PostActivity extends Activity {
 			// data.put("radius", "100.0");
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
-					.execute("http://sheltered-falls-8280.herokuapp.com/artifacts.json");
+					.execute("https://sheltered-falls-8280.herokuapp.com/artifacts.json");
 		} else if (type.equals("user")) {
 			Log.i("TYPE", "we are posting a new user");
 			HashMap<String, String> data = new HashMap<String, String>();
@@ -119,10 +119,10 @@ public class PostActivity extends Activity {
 				HttpPost http_request = new HttpPost();
 				if (type.equals("user")) {
 					http_request = new HttpPost(
-							"http://sheltered-falls-8280.herokuapp.com/users.json");
+							"https://sheltered-falls-8280.herokuapp.com/users.json");
 				} else if (type.equals("artifact")) {
 					http_request = new HttpPost(
-							"http://sheltered-falls-8280.herokuapp.com/artifacts.json");
+							"https://sheltered-falls-8280.herokuapp.com/artifacts.json");
 				}
 
 				http_request.setHeader("Content-type", "application/json");
