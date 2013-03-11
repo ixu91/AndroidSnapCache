@@ -13,7 +13,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,8 +25,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.facebook.Session;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,17 +35,29 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.facebook.Session;
 
 public class ProfileActivity extends Activity {
 
 	private static final String MY_API_KEY = "Alz5CvlnsTliNCseaYWgwz";
-
+	
 	private LocationManager locationManager;
-	private HashMap<String, String> files;
+	
+	//private HashMap<String, String> files;
+	private List<Map<String,String>> files = new ArrayList<Map<String,String>>();
+	private HashMap<String, String> urlToName;
 	String uid = "";
 	String fb_token = "";
+	private ListView lv;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -55,9 +68,15 @@ public class ProfileActivity extends Activity {
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		Bundle b = getIntent().getExtras();
-		files = new HashMap<String,String>();
+		urlToName = new HashMap<String, String>();
+		//files = new HashMap<String,String>();
 		Log.i("PROFILE", "here");
 		uid = b.getString("uid");
+		Log.i("LIST", "listview before");
+		lv = (ListView) findViewById(R.id.listView);
+
+		Log.i("LIST2", "listview after");
+		
 
 		//		Intent intent = new Intent(this, ProxAlertService.class);
 		//		startService(intent);
@@ -110,7 +129,7 @@ public class ProfileActivity extends Activity {
 		Bundle b = new Bundle();
 		b.putString("latitude", latitude);
 		b.putString("longitude", longitude);
-		b.putString("name", "android_file");
+		b.putString("name", "testPickup");
 		b.putString("uid", uid);
 		Log.i("data",uid);
 
@@ -153,8 +172,8 @@ public class ProfileActivity extends Activity {
 		}
 
 		//list stuff
-
-
+		
+		
 	}
 
 	@Override
@@ -163,6 +182,7 @@ public class ProfileActivity extends Activity {
 
 	}
 
+	
 	private String getJSON(String latitude, String longitude) throws ClientProtocolException, IOException{
 		Log.i("Test","In getJSon");
 		int resCode;
@@ -178,6 +198,7 @@ public class ProfileActivity extends Activity {
 		sb.append("&fb_token=");
 		sb.append(fb_token);
 		String finalUrl = sb.toString();
+		Log.i("Test","get gets called");
 		new RequestTask().execute(finalUrl);
 		return "";
 	}
@@ -224,10 +245,48 @@ public class ProfileActivity extends Activity {
 				Log.i("S", name);
 				//Toast toast = Toast.makeText(getApplicationContext(), "hi" + result, 50);
 				//toast.show();
-				files.put(name, url);
+				//files.put(name, url);
+				Log.i("ADD A FILE NOW", "ADD FILE");
+				files.add(getFileURL("name",name));
+				Log.i("ADDS URL TO FILES HASH", "ADDDDS");
+				urlToName.put(name, url);
 			}
+			
+			SimpleAdapter simpleAdpt = new SimpleAdapter(getApplicationContext(), files, android.R.layout.simple_list_item_1,new String[] {"name"}, new int[]{android.R.id.text1});
+
+			Log.i("ADAPTER", "adapter after");
+			lv.setAdapter(simpleAdpt);
+			Log.i("ADAPTER", "adapt lv aft");
+			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				 
+			     public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
+			                             long id) {
+			              
+			      
+			         // We know the View is a TextView so we can cast it
+			         TextView clickedView = (TextView) view;
+			         DownloadFile df = new DownloadFile();
+			         df.execute(urlToName.get(clickedView.getText()));
+			         File videoFile2Play = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.png");
+			         Intent i = new Intent();
+			         i.setAction(android.content.Intent.ACTION_VIEW);
+			         
+			         i.setDataAndType(Uri.fromFile(videoFile2Play), "image/*");
+			         startActivity(i);
+			         
+			 
+			     }
+			});
 
 		}
+	}
+	
+	private HashMap<String, String> getFileURL(String key, String value){
+		HashMap<String, String> fileURL = new HashMap<String,String>();
+		Log.i("TEST", value);
+		
+		fileURL.put(key, value);
+		return fileURL;
 	}
 
 	private class DownloadFile extends AsyncTask<String, Integer, String> {
@@ -242,8 +301,8 @@ public class ProfileActivity extends Activity {
 
 				// download the file
 				InputStream input = new BufferedInputStream(url.openStream());
-				OutputStream output = new FileOutputStream("/sdcard/file_name.extension");
-
+				OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/test.png");
+				Log.i("S", "here?");
 				byte data[] = new byte[1024];
 				
 				int count;

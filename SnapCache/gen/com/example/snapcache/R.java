@@ -230,13 +230,14 @@ containing a value of this type.
         public static final int ic_launcher=0x7f02002d;
         public static final int instagram=0x7f02002e;
         public static final int select=0x7f02002f;
-        public static final int spinner=0x7f020030;
+        public static final int snapcache=0x7f020030;
+        public static final int spinner=0x7f020031;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f080021;
         public static final int authButton=0x7f08000b;
         public static final int button1=0x7f08000a;
-        public static final int button2=0x7f080022;
+        public static final int button2=0x7f080024;
         public static final int com_facebook_login_activity_progress_bar=0x7f08000e;
         public static final int com_facebook_picker_activity_circle=0x7f08000d;
         public static final int com_facebook_picker_checkbox=0x7f080010;
@@ -260,13 +261,15 @@ containing a value of this type.
         public static final int gridView1=0x7f080004;
         public static final int large=0x7f080002;
         public static final int linearLayout1=0x7f080007;
+        public static final int listView=0x7f080023;
         public static final int listView1=0x7f080003;
-        public static final int menu_settings=0x7f080023;
+        public static final int menu_settings=0x7f080025;
         public static final int normal=0x7f080001;
         public static final int picker_subtitle=0x7f08001d;
         public static final int progressBar1=0x7f080005;
         public static final int search_box=0x7f08001c;
         public static final int small=0x7f080000;
+        public static final int test_image=0x7f080022;
         public static final int textView1=0x7f080009;
         public static final int webView1=0x7f080006;
     }

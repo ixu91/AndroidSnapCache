@@ -48,7 +48,7 @@ public final class R {
 		public static final int glyphicons_011_camera = 0x7f020022;
 		public static final int glyphicons_361_dropbox = 0x7f020026;
 		public static final int glyphicons_395_flickr = 0x7f02002a;
-		public static final int spinner = 0x7f020030;
+		public static final int spinner = 0x7f020031;
 		public static final int footer = 0x7f02001f;
 		public static final int glyphicons_008_film = 0x7f020021;
 		public static final int glyphicons_366_picasa = 0x7f020027;
