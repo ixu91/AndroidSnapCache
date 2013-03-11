@@ -149,9 +149,11 @@ public class MainActivity extends Activity {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			String responseString = null;
+			int code = 0;
 			try {
 				response = httpclient.execute(new HttpGet(uri[0]));
 				StatusLine statusLine = response.getStatusLine();
+				code = response.getStatusLine().getStatusCode();
 				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					response.getEntity().writeTo(out);
@@ -165,11 +167,11 @@ public class MainActivity extends Activity {
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
-				Log.i("HTTP", "theres an error");
+				Log.i("HTTP", "theres an error: " + Integer.toString(code));
 
 				// TODO Handle problems..
 			} catch (IOException e) {
-				Log.i("HTTP", "theres an error");
+				Log.i("HTTP", "theres an error: " + Integer.toString(code));
 
 				// TODO Handle problems..
 			}

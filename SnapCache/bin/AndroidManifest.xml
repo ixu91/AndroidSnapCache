@@ -50,6 +50,7 @@
         <activity android:name="ProxAlertActivity" >
         </activity>
         <service android:name="ProxAlertService"></service>
+        <activity android:name="UploadActivity"></activity>
     </application>
 
 </manifest>

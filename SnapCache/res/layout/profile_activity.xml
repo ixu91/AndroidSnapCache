@@ -6,13 +6,6 @@
     android:background="@color/green"
     android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/test_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/snapcache" />
-
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

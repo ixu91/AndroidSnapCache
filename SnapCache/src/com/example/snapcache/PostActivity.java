@@ -69,7 +69,7 @@ public class PostActivity extends Activity {
 			data.put("file_url", url);
 			data.put("latitude", latitude);
 			data.put("longitude", longitude);
-			data.put("name", "android_file");
+			data.put("name", name);
 			data.put("privacy", privacy);
 			data.put("user_id", uid);
 			data.put("fb_token", fb_token);
