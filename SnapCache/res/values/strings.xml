@@ -5,7 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="app_id">286989961430000</string>
+
     <color name="green">#00FF00</color>
+    <color name="white">#FAF0E6</color>
+
     <string name="mf">Fuck Yeah</string>
 
 </resources>

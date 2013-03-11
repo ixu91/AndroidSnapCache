@@ -69,13 +69,15 @@ public class UploadActivity extends Activity {
 		
 		Uri uri = data.getData();
 		String url = data.getExtras().getString("fpurl");
-		Log.i("FP", url);
 
 		Criteria criteria = new Criteria();
 		String provider = locationManager.getBestProvider(criteria, false);
 		Location location = locationManager.getLastKnownLocation(provider);
 		String latitude = Double.toString(location.getLatitude());
+		Log.i("FP-lat", latitude);
+
 		String longitude = Double.toString(location.getLongitude());
+		Log.i("FP-long", longitude);
 
 		Intent intent = new Intent(this, PostActivity.class);
 

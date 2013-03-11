@@ -42,13 +42,13 @@ public final class R {
 		public static final int glyphicons_144_folder_open = 0x7f020024;
 		public static final int instagram = 0x7f02002e;
 		public static final int glyphicons_381_github = 0x7f020028;
-		public static final int select = 0x7f02002f;
+		public static final int select = 0x7f020030;
 		public static final int gdrive = 0x7f020020;
 		public static final int glyphicons_390_facebook = 0x7f020029;
 		public static final int glyphicons_011_camera = 0x7f020022;
 		public static final int glyphicons_361_dropbox = 0x7f020026;
 		public static final int glyphicons_395_flickr = 0x7f02002a;
-		public static final int spinner = 0x7f020031;
+		public static final int spinner = 0x7f020032;
 		public static final int footer = 0x7f02001f;
 		public static final int glyphicons_008_film = 0x7f020021;
 		public static final int glyphicons_366_picasa = 0x7f020027;

@@ -63,9 +63,17 @@ public class MainActivity extends Activity {
 			Bundle b = new Bundle();
 			b.putString("uid", uid);
 			i.putExtra("uid", uid);
-			startActivity(i);
+			// startActivity(i);
 		}
 
+	}
+
+	public void startHome(View view) {
+		Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+		Bundle b = new Bundle();
+		b.putString("uid", uid);
+		i.putExtra("uid", uid);
+		startActivity(i);
 	}
 
 	@Override
@@ -103,14 +111,16 @@ public class MainActivity extends Activity {
 										name = user.getName();
 										new RequestTask()
 												.execute("https://sheltered-falls-8280.herokuapp.com/users/get_by_facebook_id.json?facebook_id="
-														+ fb_id + "&fb_token=" + fb_token);
+														+ fb_id
+														+ "&fb_token="
+														+ fb_token);
 
-//										Intent i = new Intent(
-//												getApplicationContext(),
-//												ProfileActivity.class);
-//										Bundle b = new Bundle();
-//										b.putString("uid", uid);
-//										startActivity(i);
+										// Intent i = new Intent(
+										// getApplicationContext(),
+										// ProfileActivity.class);
+										// Bundle b = new Bundle();
+										// b.putString("uid", uid);
+										// startActivity(i);
 									}
 								}
 							});
@@ -197,7 +207,7 @@ public class MainActivity extends Activity {
 				i.putExtra("uid", uid);
 				b.putString("uid", uid);
 				Log.i("UID", uid);
-				startActivity(i);
+				// startActivity(i);
 
 			} else {
 				// does not exist, so must post new user

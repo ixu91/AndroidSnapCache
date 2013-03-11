@@ -52,9 +52,9 @@ public class FilePickerAPI {
 
 	public final static String FPHOSTNAME = "www.filepicker.io";
 	public final static String FPBASEURL = "https://" + FPHOSTNAME + "/";
-	public static String FPAPIKEY = "ADkvlBBC4ReOhGkybgqRHz";//"";
-	public static String FILE_GET_JS_SESSION_PART = "{\"apikey\":\""
-			+ FPAPIKEY + "\", \"version\":\"v0\"";
+	public static String FPAPIKEY = "ADkvlBBC4ReOhGkybgqRHz";// "";
+	public static String FILE_GET_JS_SESSION_PART = "{\"apikey\":\"" + FPAPIKEY
+			+ "\", \"version\":\"v0\"";
 	public final static int REQUEST_CODE_AUTH = 600;
 	public final static int REQUEST_CODE_GETFILE = 601;
 	public final static int REQUEST_CODE_SAVEFILE = 602;
@@ -77,8 +77,7 @@ public class FilePickerAPI {
 
 	public static void setKey(String key) {
 		FPAPIKEY = key;
-		FILE_GET_JS_SESSION_PART = "{\"app\":{\"apikey\":\""
-				+ FPAPIKEY + "\"}";
+		FILE_GET_JS_SESSION_PART = "{\"app\":{\"apikey\":\"" + FPAPIKEY + "\"}";
 	}
 
 	protected static boolean isKeySet() {
@@ -118,10 +117,10 @@ public class FilePickerAPI {
 	public ArrayList<Service> getProviders() {
 		ArrayList<Service> services = new ArrayList<Service>();
 		services.add(new Service("Gallery", "/Gallery/",
-				new String[] { "image/*" }, R.drawable.glyphicons_008_film,
+				new String[] { "*/*" }, R.drawable.glyphicons_008_film,
 				false, ""));
 		services.add(new Service("Camera", "/Camera/",
-				new String[] { "image/jpg" }, R.drawable.glyphicons_011_camera,
+				new String[] { "image/*" }, R.drawable.glyphicons_011_camera,
 				false, ""));
 		services.add(new Service("Dropbox", "/Dropbox/",
 				new String[] { "*/*" }, R.drawable.glyphicons_361_dropbox,
@@ -130,8 +129,8 @@ public class FilePickerAPI {
 				new String[] { "image/*" }, R.drawable.glyphicons_390_facebook,
 				true, "facebook"));
 		services.add(new Service("Instagram", "/Instagram/",
-				new String[] { "image/*" }, R.drawable.instagram,
-				true, "instagram"));
+				new String[] { "image/*" }, R.drawable.instagram, true,
+				"instagram"));
 		services.add(new Service("Flickr", "/Flickr/",
 				new String[] { "image/*" }, R.drawable.glyphicons_395_flickr,
 				true, "flickr"));
@@ -195,7 +194,7 @@ public class FilePickerAPI {
 	}
 
 	private Inode inodeForJSONObject(JSONObject content) throws JSONException {
-		debug("inodeForJSONObject: " + content.toString() );
+		debug("inodeForJSONObject: " + content.toString());
 		String displayName = content.getString("display_name");
 		String path = content.getString("link_path");
 		boolean is_dir = content.getBoolean("is_dir");
@@ -296,10 +295,17 @@ public class FilePickerAPI {
 				return null;
 			}
 			try {
+				Log.i("FP", "folder get path");
+
 				Folder folder = getPath(args[0], args[1]);
-				if (folder == null)
+				if (folder == null){
+					Log.i("FP", "folde is null");
+
 					return null;
+				}
 				DataCache.getInstance().put(args[0] + args[1], folder);
+				Log.i("FP", "we should have a folder");
+
 				return folder;
 			} catch (AuthError e) {
 				debug("Auth error: not caching");
@@ -308,20 +314,34 @@ public class FilePickerAPI {
 		}
 	}
 
-	@SuppressLint("NewApi")
+//	@SuppressLint("NewApi")
 	public PrecacheTask precache(String path, String mimetypes) {
-		if (DataCache.getInstance().get(path + mimetypes) != null)
+		Log.i("FP", "lets debug fb weeeee");
+
+		if (DataCache.getInstance().get(path + mimetypes) != null) {
+			Log.i("FP", "lets debug fb1");
+
 			return null;
+		}
 		int SDK_INT = android.os.Build.VERSION.SDK_INT;
 		PrecacheTask task = new PrecacheTask();
-		if (SDK_INT >= 12)
+		if (SDK_INT >= 12) {
+			Log.i("FP", "lets debug fb2" + path);
+
 			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path,
 					mimetypes);
+		}
 		else
 			task.execute(path, mimetypes);
+		Log.i("FP", "precache old");
+
 		PrecacheTask oldTask = precacheTaskList.add(task);
 		if (oldTask != null) {
+			Log.i("FP", "old task != null");
+
 			if (oldTask.getStatus() != AsyncTask.Status.FINISHED) {
+				Log.i("FP", "cancel");
+
 				// oldTask.cancel(true);
 				oldTask.cancel(false);
 			}
@@ -332,9 +352,14 @@ public class FilePickerAPI {
 	public Folder getPath(String path, String mimetypes) throws AuthError {
 		debug("getPath path: " + path);
 		Folder cached = DataCache.getInstance().get(path + mimetypes);
-		if (cached != null)
+		if (cached != null) {
+			Log.i("FP", "cached");
+
 			return cached;
+		}
 		try {
+			Log.i("FP", "http get");
+
 			HttpGet httpget = new HttpGet(FPBASEURL
 					+ "api/path"
 					+ pathUrlEncode(path)
@@ -345,8 +370,6 @@ public class FilePickerAPI {
 			String response = getStringFromNetworkRequest(httpget);
 			Log.i("GOD1", response);
 
-			Log.i("IAN", "after");
-
 			return parseFolder(response, path);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -356,9 +379,11 @@ public class FilePickerAPI {
 		return null;
 	}
 
-
 	public void unauth(Service service) {
-		HttpGet httpget = new HttpGet(FPBASEURL + "api/client/" + service.getServiceId() + "/unauth/");
+		HttpGet httpget = new HttpGet(FPBASEURL + "api/client/"
+				+ service.getServiceId() + "/unauth/");
+		Log.i("FP", "unauth?");
+
 		try {
 			getStringFromNetworkRequest(httpget);
 		} catch (IOException e) {
@@ -367,27 +392,40 @@ public class FilePickerAPI {
 	}
 
 	private File getTempFileForName(String filename, Context context) {
-		debug("getTempFileForName" );
+		debug("getTempFileForName");
 		boolean mExternalStorageAvailable = false;
 		boolean mExternalStorageWriteable = false;
 		String state = Environment.getExternalStorageState();
 
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			Log.i("FP", "mounted");
+
 			// We can read and write the media
 			mExternalStorageAvailable = mExternalStorageWriteable = true;
 		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			Log.i("FP", "mounted read");
+
 			// We can only read the media
 			mExternalStorageAvailable = true;
 			mExternalStorageWriteable = false;
 		} else {
-			// Something else is wrong. It may be one of many other states, but all we need
-			//  to know is we can neither read nor write
+			Log.i("FP", "no mount");
+
+			// Something else is wrong. It may be one of many other states, but
+			// all we need
+			// to know is we can neither read nor write
 			mExternalStorageAvailable = mExternalStorageWriteable = false;
 		}
 		File dir = null;
+		Log.i("FP", "past mount");
+
 		if (mExternalStorageWriteable) {
+			Log.i("FP", "writable");
+
 			dir = context.getExternalCacheDir();
 		} else {
+			Log.i("FP", "not writable");
+
 			dir = context.getCacheDir();
 		}
 		File tempFile = new File(dir, filename);
@@ -397,7 +435,9 @@ public class FilePickerAPI {
 	// Download uri and store into a tmp file
 	public String downloadUrl(String URI, String filename, Context context)
 			throws IllegalStateException, IOException {
-		debug("downloadUrl" );
+		debug("downloadUrl");
+		Log.i("FP", "we are downloading");
+
 		HttpGet httpget = new HttpGet(URI.replace(" ", "%20"));
 		AndroidHttpClient httpClient = getHttpClient();
 		HttpResponse httpResponse = httpClient.execute(httpget, httpContext);
@@ -409,6 +449,8 @@ public class FilePickerAPI {
 		} else {
 			try {
 				File f = getTempFileForName(filename, context);
+				Log.i("FP", "down get path");
+
 				String filePath = f.getPath();
 				FileOutputStream fout = new FileOutputStream(f);
 				httpResponse.getEntity().writeTo(fout);
@@ -426,7 +468,9 @@ public class FilePickerAPI {
 
 	public void saveFileAs(String path, Uri contentURI, Context context)
 			throws IOException {
-		debug("saveFileAs" );
+		debug("saveFileAs");
+		Log.i("FP", "we are saving");
+
 		String url = uploadFileToTemp(contentURI, context).getFPUrl();
 		Log.i("GODD", "are we here");
 		Log.i("GODD", url);
@@ -459,6 +503,8 @@ public class FilePickerAPI {
 	public FPFile uploadFileToTemp(Uri contentURI, Context context)
 			throws IOException {
 		debug("uploadFileToTemp");
+		Log.i("FP", "uploadtemp");
+
 		String postUrl = FPBASEURL + "api/path/computer/" + "?js_session="
 				+ URLEncoder.encode(getJSSession(), "utf-8");
 		HttpPost httppost = new HttpPost(URI.create(postUrl));
@@ -475,9 +521,9 @@ public class FilePickerAPI {
 		try {
 			JSONObject json = new JSONObject(response);
 			JSONObject data = json.getJSONArray("data").getJSONObject(0);
-			debug("data: " + data.toString() );
+			debug("data: " + data.toString());
 			String url = data.getString("url");
-//			String key = data.getJSONObject("data").getString("key");
+			// String key = data.getJSONObject("data").getString("key");
 			Log.i("GODD1", url);
 
 			return new FPFile(contentURI.toString(), url, "fuck a key");
@@ -491,29 +537,28 @@ public class FilePickerAPI {
 
 	public FPFile getLocalFileForPath(String path, Context context)
 			throws AuthError {
-		debug("getLocalFileForPath" );
+		debug("getLocalFileForPath");
 		Log.i("IAN-fp", "getLocalFile");
 		try {
 			String query = getJSSession();
-			HttpGet httpget = new HttpGet(FPBASEURL + "api/path"
-					+ path + "?format=fpurl&js_session="
+			HttpGet httpget = new HttpGet(FPBASEURL + "api/path" + path
+					+ "?format=fpurl&js_session="
 					+ URLEncoder.encode(query, "utf-8"));
 			String response = getStringFromNetworkRequest(httpget);
-			
+
 			Log.i("GOD4", response);
 			// return parseFolder(builder.toString(), path);
 			JSONObject json;
 			try {
 				json = new JSONObject(response);
-				debug("getLocalFileForPath: " + json.toString() );
+				debug("getLocalFileForPath: " + json.toString());
 				String url = json.getString("url");
 				Log.i("IAN", json.getString("url"));
 				String filename = json.getString("filename");
 				String key = null;
-				try{
+				try {
 					key = json.getString("key");
-				}
-				catch(JSONException e){
+				} catch (JSONException e) {
 					debug("No key in json");
 				}
 				return new FPFile(downloadUrl(url, filename, context), url, key);
@@ -549,7 +594,7 @@ public class FilePickerAPI {
 			@Override
 			public Socket connectSocket(Socket sock, String host, int port,
 					InetAddress localAddress, int localPort, HttpParams params)
-							throws IOException {
+					throws IOException {
 				return delegate.connectSocket(sock, host, port, localAddress,
 						localPort, params);
 			}
@@ -580,7 +625,7 @@ public class FilePickerAPI {
 			}
 		};
 		client.getConnectionManager().getSchemeRegistry()
-		.register(new Scheme("https", socketFactory, 443));
+				.register(new Scheme("https", socketFactory, 443));
 	}
 
 	private AndroidHttpClient getHttpClient() {
@@ -589,7 +634,6 @@ public class FilePickerAPI {
 		// ConnManagerParams.setMaxTotalConnections(params, 20);
 		return httpClient;
 	}
-
 
 	private String getStringFromNetworkRequest(HttpUriRequest request)
 			throws IOException {
@@ -609,13 +653,13 @@ public class FilePickerAPI {
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(
 								AndroidHttpClient
-								.getUngzippedContent(responseEntity)));
+										.getUngzippedContent(responseEntity)));
 				StringBuilder builder = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {
 					builder.append(line);
 				}
-				
+
 				debug("Builder string: " + builder.toString());
 				httpClient.close();
 				return builder.toString();

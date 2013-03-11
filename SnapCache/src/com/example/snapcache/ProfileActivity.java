@@ -35,6 +35,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -50,6 +52,9 @@ public class ProfileActivity extends Activity {
 	private ListView lv;
 	HashMap<String, String> urlToName;
 	String file_loc = "";
+	ImageView imgView;
+	private String folderUrl;
+	private File folder;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,11 +67,16 @@ public class ProfileActivity extends Activity {
 		Bundle b = getIntent().getExtras();
 		Log.i("PROFILE", "here");
 		uid = b.getString("uid");
+		folderUrl = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SnapCache";
+		Log.i("DIR", folderUrl);
+		folder = new File(folderUrl);
+		folder.mkdirs();
 		lv = (ListView) findViewById(R.id.listView);
 	}
 
 	public void startPost(View view) {
 		Intent in = new Intent(this, UploadActivity.class);
+		Log.i("APP", "clicked");
 		in.putExtra("uid", uid);
 		startActivity(in);
 	}
@@ -94,10 +104,19 @@ public class ProfileActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(folder.isDirectory()){
+			String [] children = folder.list();
+			for (String child : children)
+				new File (folder, child).delete();
+		}
+	}
 
 	private String getJSON(String latitude, String longitude)
 			throws ClientProtocolException, IOException {
-		Log.i("Test", "In getJSon");
 		int resCode;
 		String res_string = "";
 		String url = "http://sheltered-falls-8280.herokuapp.com/artifacts/show_all_nearby.json?";
@@ -111,7 +130,6 @@ public class ProfileActivity extends Activity {
 		sb.append("&fb_token=");
 		sb.append(fb_token);
 		String finalUrl = sb.toString();
-		Log.i("Test", "get gets called");
 		new RequestTask().execute(finalUrl);
 		return finalUrl;
 	}
@@ -150,23 +168,14 @@ public class ProfileActivity extends Activity {
 			urlToName = new HashMap<String, String>();
 
 			super.onPostExecute(result);
-			Log.i("S", result);
 			String[] entries = result.split("\\},");
-			int count = 1;
 			for (String entry : entries) {
-				Log.i("S" + Integer.toString(count),
-						Integer.toString(entries.length));
 				String[] tokens = entry.split(",");
 				String url = (tokens[2].split(":\""))[1].split("\"")[0];
 				String name = (tokens[6].split(":\""))[1].split("\"")[0];
-				Log.i("S-url", url);
-				Log.i("S-name", name);
 				;
-				Log.i("ADD A FILE NOW", "ADD FILE");
 				files.add(getFileURL("name", name));
-				Log.i("ADDS URL TO FILES HASH", "ADDDDS");
 				urlToName.put(name, url);
-				count += 1;
 			}
 
 			SimpleAdapter simpleAdpt = new SimpleAdapter(
@@ -174,9 +183,7 @@ public class ProfileActivity extends Activity {
 					android.R.layout.simple_list_item_1,
 					new String[] { "name" }, new int[] { android.R.id.text1 });
 
-			Log.i("ADAPTER", "adapter after");
 			lv.setAdapter(simpleAdpt);
-			Log.i("ADAPTER", "adapt lv aft");
 			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 				public void onItemClick(AdapterView<?> parentAdapter,
@@ -187,22 +194,8 @@ public class ProfileActivity extends Activity {
 					DownloadFile df = new DownloadFile();
 					df.execute(urlToName.get(clickedView.getText()));
 					Log.i("url2name", urlToName.get(clickedView.getText()));
-					
-//					File videoFile2Play = new File(Environment
-//							.getExternalStorageDirectory().getAbsolutePath()
-//							+ file_loc);
-//					Log.i("GET FILE", Environment.getExternalStorageDirectory()
-//							.getAbsolutePath() + "/test.png");
-//					Intent i = new Intent();
-//					i.setAction(android.content.Intent.ACTION_VIEW);
-//
-//					i.setDataAndType(Uri.fromFile(videoFile2Play), "image/*");
-//					startActivity(i);
-
 				}
 			});
-			Log.i("ADAPTER", "adapt lv aft2");
-
 		}
 	}
 
@@ -221,21 +214,17 @@ public class ProfileActivity extends Activity {
 				URL url = new URL(sUrl[0]);
 				URLConnection connection = url.openConnection();
 				connection.connect();
-				// this will be useful so that you can show a typical 0-100%
-				// progress bar
-				int fileLength = connection.getContentLength();
-
-				Log.i("fpurl",sUrl[0]);
-				Log.i("sub",sUrl[0].substring(35));
-				file_loc = "/"+sUrl[0].substring(35);
+			
+				Log.i("fpurl", sUrl[0]);
+				Log.i("sub", sUrl[0].substring(35));
+				file_loc =  sUrl[0].substring(35) + ".jpeg";
 				// download the file
 				InputStream input = new BufferedInputStream(url.openStream());
-				Log.i("file_location", Environment
-						.getExternalStorageDirectory().getAbsolutePath()
-						+ file_loc + ".png");
-				OutputStream output = new FileOutputStream(Environment
-						.getExternalStorageDirectory().getAbsolutePath()
-						+ file_loc + ".png");
+				Log.i("file_location", folder.getAbsolutePath() + file_loc);
+				//OutputStream output = new FileOutputStream(Environment
+				//		.getExternalStorageDirectory().getAbsolutePath()
+				//		+ file_loc + ".png");
+				OutputStream output = new FileOutputStream(new File(folder, file_loc));
 				Log.i("S", "here?");
 				byte data[] = new byte[1024];
 
@@ -251,19 +240,17 @@ public class ProfileActivity extends Activity {
 			} catch (Exception e) {
 				Log.d("Exception", e.getMessage());
 			}
+
+			Log.i("GET FILE", folder.getAbsolutePath() + "/" + file_loc);
+			File videoFile2Play = new File(folder.getAbsoluteFile() + "/" + file_loc);
 			
-			Log.i("GET FILE", Environment.getExternalStorageDirectory()
-					.getAbsolutePath() + file_loc + ".png");
-			File videoFile2Play = new File(Environment
-					.getExternalStorageDirectory().getAbsolutePath()
-					+ file_loc + ".png");
 			if (videoFile2Play.exists()) {
 				Log.i("EXIST", "it is there");
 			} else {
 				Log.i("EXIST", "nope");
 
 			}
-			
+
 			Intent i = new Intent();
 			i.setAction(android.content.Intent.ACTION_VIEW);
 

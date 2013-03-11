@@ -10,6 +10,7 @@ import io.filepicker.R;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -98,7 +99,7 @@ public class FilePicker extends Activity {
 
 			if (inode.getIsDir()) {
 				FilePickerAPI.getInstance()
-				.precache(inode.getPath(), mimetypes);
+						.precache(inode.getPath(), mimetypes);
 			}
 		}
 
@@ -150,7 +151,7 @@ public class FilePicker extends Activity {
 						root = fpapi.getProvidersForMimetype(mimetypes, saveas);
 					else
 						root = fpapi
-						.getProvidersForServiceArray(selectedServices);
+								.getProvidersForServiceArray(selectedServices);
 					return new Folder(root, "list", "");
 				} else {
 					return fpapi.getPath(path, mimetypes);
@@ -171,7 +172,10 @@ public class FilePicker extends Activity {
 				startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_AUTH);
 				overridePendingTransition(0, 0);
 			} else if (result == null) {
-				Toast.makeText(FilePicker.this, "An unexpected error occured. Are you connected to a network?", Toast.LENGTH_LONG).show();
+				Toast.makeText(
+						FilePicker.this,
+						"An unexpected error occured. Are you connected to a network?",
+						Toast.LENGTH_LONG).show();
 				setResult(RESULT_CANCELED);
 				finish();
 			} else {
@@ -201,7 +205,9 @@ public class FilePicker extends Activity {
 						Inode inode = (Inode) (parent.getAdapter()
 								.getItem(position));
 						if (inode.isDisabled()) {
-							Toast.makeText(FilePicker.this, "App doesn't support this file type", Toast.LENGTH_SHORT).show();
+							Toast.makeText(FilePicker.this,
+									"App doesn't support this file type",
+									Toast.LENGTH_SHORT).show();
 							return;
 						}
 						if (inode.getIsDir()) {
@@ -230,6 +236,7 @@ public class FilePicker extends Activity {
 										imageUri);
 								startActivityForResult(intent, CAMERA_REQUEST);
 							} else {
+								Log.i("FP", "lets debug fb");
 								Intent intent = new Intent(FilePicker.this,
 										FilePicker.class);
 								intent.putExtra("path", inode.getPath());
@@ -237,7 +244,11 @@ public class FilePicker extends Activity {
 								intent.putExtra("display_name",
 										inode.getDisplayName());
 								if (saveas) {
+									Log.i("FP", "trying to save");
+
 									intent.setData(fileToSave);
+									Log.i("FP", fileToSave.getPath());
+
 									intent.setAction(SAVE_CONTENT);
 									if (extension.length() > 0)
 										intent.putExtra("extension", extension);
@@ -358,21 +369,18 @@ public class FilePicker extends Activity {
 
 	protected void unauth(final Service service) {
 		if (service.getServiceId().length() == 0)
-			return; //local
-		new AlertDialog.Builder(this)
-		.setTitle("Logout")
-		.setMessage("Log out of " + service.getDisplayName() + "?")
-		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			return; // local
+		new AlertDialog.Builder(this).setTitle("Logout")
+				.setMessage("Log out of " + service.getDisplayName() + "?")
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				FilePickerAPI.debug("Starting unauth");
-				new UnAuthTask().execute(service);
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						FilePickerAPI.debug("Starting unauth");
+						new UnAuthTask().execute(service);
 
-			}
-		})
-		.setNegativeButton("Cancel", null)
-		.show();
+					}
+				}).setNegativeButton("Cancel", null).show();
 	}
 
 	class UnAuthTask extends AsyncTask<Service, Integer, Void> {
@@ -536,6 +544,7 @@ public class FilePicker extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i("res", Integer.toString(requestCode));
 		switch (requestCode) {
 		case FilePickerAPI.REQUEST_CODE_AUTH:
 			if (resultCode == RESULT_OK) {
@@ -565,9 +574,11 @@ public class FilePicker extends Activity {
 		case CAMERA_REQUEST:
 			if (resultCode == RESULT_OK) {
 				new UploadLocalFileTask().execute(imageUri);
+				Log.i("FP2", imageUri.getPath());
 				setProgressVisible();
 				// enableLoading
 			}
+			Log.i("FP2", "camera request");
 			break;
 		}
 
