@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:onClick="startPost"
         android:text="Upload" />
@@ -26,5 +25,14 @@
         android:layout_alignParentTop="true" >
 
     </ListView>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="showMapView"
+        android:text="Map" />
 
 </RelativeLayout>

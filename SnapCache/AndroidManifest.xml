@@ -8,11 +8,22 @@
         android:minSdkVersion="7"
         android:targetSdkVersion="17" />
 
+    <permission
+        android:name="com.example.snapcache.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="com.example.snapcache.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -37,20 +48,27 @@
         </activity>
         <activity
             android:name="io.filepicker.FilePicker"
-            android:label="@string/title_activity_file_picker" >
+            android:label="title_activity_file_picker" >
         </activity>
         <activity
             android:name="io.filepicker.AuthActivity"
-            android:label="@string/title_activity_file_picker_auth" >
+            android:label="title_activity_file_picker_auth" >
         </activity>
         <activity android:name="ProfileActivity" >
         </activity>
+        
         <activity android:name="PostActivity" >
         </activity>
         <activity android:name="ProxAlertActivity" >
         </activity>
         <service android:name="ProxAlertService"></service>
         <activity android:name="UploadActivity"></activity>
+        <activity android:name="MapActivity">
+            
+        </activity>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDPZeP3klwdnoMUgpNwcVV0PK3jkZNYOtU" />
     </application>
 
 </manifest>

@@ -8,30 +8,30 @@ package io.filepicker;
 
 public final class R {
 	public static final class id {
-		public static final int webView1 = 0x7f080006;
-		public static final int editText1 = 0x7f080008;
-		public static final int textView1 = 0x7f080009;
-		public static final int listView1 = 0x7f080003;
-		public static final int progressBar1 = 0x7f080005;
-		public static final int gridView1 = 0x7f080004;
-		public static final int linearLayout1 = 0x7f080007;
-		public static final int button1 = 0x7f08000a;
+		public static final int webView1 = 0x7f05000a;
+		public static final int editText1 = 0x7f05000c;
+		public static final int textView1 = 0x7f05000d;
+		public static final int listView1 = 0x7f050007;
+		public static final int progressBar1 = 0x7f050009;
+		public static final int gridView1 = 0x7f050008;
+		public static final int linearLayout1 = 0x7f05000b;
+		public static final int button1 = 0x7f05000e;
 	}
 	public static final class anim {
+		public static final int right_slide_in = 0x7f040000;
 		public static final int right_slide_out_back = 0x7f040003;
 		public static final int right_slide_out = 0x7f040002;
 		public static final int right_slide_in_back = 0x7f040001;
-		public static final int right_slide_in = 0x7f040000;
 	}
 	public static final class style {
-		public static final int AppTheme = 0x7f070000;
+		public static final int AppTheme = 0x7f080000;
 	}
 	public static final class string {
-		public static final int title_activity_file_picker = 0x7f060002;
-		public static final int title_activity_file_picker_auth = 0x7f060003;
-		public static final int file_picker_animation_duration = 0x7f060004;
-		public static final int app_name = 0x7f060000;
-		public static final int menu_settings = 0x7f060001;
+		public static final int title_activity_file_picker = 0x7f060013;
+		public static final int title_activity_file_picker_auth = 0x7f060014;
+		public static final int file_picker_animation_duration = 0x7f060015;
+		public static final int app_name = 0x7f060011;
+		public static final int menu_settings = 0x7f060012;
 	}
 	public static final class layout {
 		public static final int activity_file_picker_saveas = 0x7f030002;
@@ -59,8 +59,8 @@ public final class R {
 		public static final int glyphicons_036_file = 0x7f020023;
 	}
 	public static final class dimen {
-		public static final int padding_medium = 0x7f050001;
-		public static final int padding_small = 0x7f050000;
-		public static final int padding_large = 0x7f050002;
+		public static final int padding_medium = 0x7f070001;
+		public static final int padding_small = 0x7f070000;
+		public static final int padding_large = 0x7f070002;
 	}
 }

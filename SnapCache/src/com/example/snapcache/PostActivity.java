@@ -63,34 +63,42 @@ public class PostActivity extends Activity {
 
 		if (type.equals("artifact")) {
 			Log.i("TYPE", "we are posting a new artifact");
-
 			HashMap<String, String> data = new HashMap<String, String>();
-			data.put("data_type", ftype);
-			data.put("file_url", url);
-			data.put("latitude", latitude);
-			data.put("longitude", longitude);
-			data.put("name", name);
-			data.put("privacy", privacy);
-			data.put("user_id", uid);
-			data.put("fb_token", fb_token);
-			Log.i("data", uid.toString());
-
-			// data.put("radius", "100.0");
+			data = getReturningUserMap();
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
 					.execute("https://sheltered-falls-8280.herokuapp.com/artifacts.json");
 		} else if (type.equals("user")) {
 			Log.i("TYPE", "we are posting a new user");
 			HashMap<String, String> data = new HashMap<String, String>();
-			data.put("facebook_id", fb_id);
-			data.put("name", name);
-			data.put("fb_token", fb_token);
+			data = getNewUserMap();
 			AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 			asyncHttpPost
 					.execute("http://sheltered-falls-8280.herokuapp.com/users.json");
 		}
 	}
 
+	public HashMap<String, String> getReturningUserMap(){
+		HashMap<String, String> data = new HashMap<String, String>();
+		data.put("data_type", ftype);
+		data.put("file_url", url);
+		data.put("latitude", latitude);
+		data.put("longitude", longitude);
+		data.put("name", name);
+		data.put("privacy", privacy);
+		data.put("user_id", uid);
+		data.put("fb_token", fb_token);
+		Log.i("data", uid.toString());
+		return data;
+	}
+	
+	public HashMap<String, String> getNewUserMap(){
+		HashMap<String, String> data = new HashMap<String, String>();
+		data.put("facebook_id", fb_id);
+		data.put("name", name);
+		data.put("fb_token", fb_token);
+		return data;
+	}
 	public class AsyncHttpPost extends AsyncTask<String, String, String> {
 		private HashMap<String, String> mData = null;// post data
 
